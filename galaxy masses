@@ -1,0 +1,50 @@
+from __future__ import print_function, division
+
+import math
+import numpy as np
+import matplotlib.pyplot as plt
+
+#remember you really should be doing all of this in the jupyter notebook because IDLE is clumky and awkward
+
+np.random.seed(12345)
+
+import astropy.units as u
+from astropy.constants import G, h, k_B
+
+Reff = 29 * u.pc
+
+print("""Half light radius
+value: {0.value}
+unit: {0.unit}""".format(Reff))
+
+print("{0:3g}".format(Reff.to(u.m)))
+
+vmean = 206
+sigin = 4.3
+v = np.random.normal(vmean, sigin, 500)*u.km/u.s
+
+print("""First 10 radial velocity measurements:
+{0}
+{1}""".format(v[:10], v.to(u.m/u.s)[:10]))
+
+plt.figure()
+plt.hist(v, bins=20, histtype="step")
+plt.xlabel("Velocity (km/s)")
+plt.ylabel("N")
+plt.show()
+
+sigma = np.sqrt(np.sum((v - np.mean(v))**2) / np.size(v))
+print("Velocity dispersion: {0:.2f}".format(sigma))
+
+M = 4*sigma**2*Reff/G
+M
+
+M.decompose()
+
+print("""Galaxy mass
+in solar units: {0:.3g}
+SI units: {1:.3g}
+CGS units: {2:.3g}""".format(M.to(u.Msun), M.si, M.cgs))
+
+np.log10(M / u.Msun)
+
